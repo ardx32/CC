@@ -1,0 +1,91 @@
+Standard Implementation Workflow (NetBeans & GlassFish):
+Initialize System: Open IDE --> File -> New Project --> Java Web --> Web Application.
+Configure Environment: Name the project, select GlassFish Server, and finish.
+Generate Service Interface: Right-click the project --> New --> Web Service. 
+Assign a Name and Package.
+Define Operations: Insert the respective operational logic (methods) below into the generated .java file.
+Deploy & Test: Right-click project --> Deploy. 
+Expand 'Web Services' --> Right-click your service -->  Test Web Service.
+Here are the specific @WebMethod implementations for your web service class:
+
+1. Currency Conversion (Java and .NET Client)Java
+
+@WebMethod(operationName = "convertRupeesToDollar")
+public double convertRupeesToDollar(@WebParam(name = "rupees") double rupees) {
+    double conversionRate = 83.0; // Dynamic systems would fetch this via an external oracle
+    return rupees / conversionRate;
+}
+
+2. Factorial of a NumberJava
+
+@WebMethod(operationName = "calculateFactorial")
+public long calculateFactorial(@WebParam(name = "n") int n) {
+    if (n < 0) return -1; // Error state for negative inputs
+    long fact = 1;
+    for (int i = 1; i <= n; i++) {
+        fact *= i;
+    }
+    return fact;
+}
+
+3. Prime Number ValidationJava
+
+@WebMethod(operationName = "isPrime")
+public String isPrime(@WebParam(name = "n") int n) {
+    if (n <= 1) return "Not Prime";
+    for (int i = 2; i <= Math.sqrt(n); i++) {
+        if (n % i == 0) return "Not Prime";
+    }
+    return "Prime";
+}
+
+4. Multiplication of 2 NumbersJava 
+@WebMethod(operationName = "multiply")
+public double multiply(@WebParam(name = "a") double a, @WebParam(name = "b") double b) {
+    return a * b;
+}
+
+5. Addition of 3 NumbersJava
+
+@WebMethod(operationName = "addThree")
+public double addThree(@WebParam(name = "a") double a, @WebParam(name = "b") double b, @WebParam(name = "c") double c) {
+    return a + b + c;
+}
+
+6. Square of a NumberJava
+
+@WebMethod(operationName = "square")
+public double square(@WebParam(name = "n") double n) {
+    return n * n;
+}
+
+7. Largest Among 2 NumbersJava
+
+@WebMethod(operationName = "findLargest")
+public double findLargest(@WebParam(name = "a") double a, @WebParam(name = "b") double b) {
+    return (a > b) ? a : b;
+}
+
+8. Cube of a NumberJava
+
+@WebMethod(operationName = "cube")
+public double cube(@WebParam(name = "n") double n) {
+    return Math.pow(n, 3);
+}
+
+9. Calculator App (Arithmetic Suite)Java
+
+@WebMethod(operationName = "add")
+public double add(@WebParam(name = "a") double a, @WebParam(name = "b") double b) { return a + b; }
+
+@WebMethod(operationName = "subtract")
+public double subtract(@WebParam(name = "a") double a, @WebParam(name = "b") double b) { return a - b; }
+
+@WebMethod(operationName = "multiplyCalc")
+public double multiplyCalc(@WebParam(name = "a") double a, @WebParam(name = "b") double b) { return a * b; }
+
+@WebMethod(operationName = "divide")
+public double divide(@WebParam(name = "a") double a, @WebParam(name = "b") double b) {
+    if (b == 0) throw new IllegalArgumentException("Division by zero");
+    return a / b;
+}
