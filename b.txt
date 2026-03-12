@@ -1,0 +1,41 @@
+REST (Representational State Transfer) utilizes standard HTTP verbs (GET, POST, PUT, DELETE) for stateless operations.
+Implementation Workflow:Create a Java Web Application. 
+Right-click--> New --> RESTful Web Services from Patterns --> Simple Root Resource.
+Path: student, MIME Type: application/json.
+Add a basic static memory structure or JDBC connection for the backend database (simplified below for demonstration).
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.Map;
+
+@Path("student")
+public class StudentResource {
+    
+    // Simulating database storage
+    private static Map<Integer, String> studentDB = new HashMap<>();
+
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String createStudent(@FormParam("id") int id, @FormParam("name") String name, 
+                                @FormParam("age") int age, @FormParam("phone") String phone, 
+                                @FormParam("subject") String subject) {
+        String record = name + ", " + age + ", " + phone + ", " + subject;
+        studentDB.put(id, record);
+        return "Student " + name + " created successfully.";
+    }
+
+    @GET
+    @Path("{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getStudent(@PathParam("id") int id) {
+        return studentDB.getOrDefault(id, "Student not found");
+    }
+
+    @DELETE
+    @Path("{id}")
+    public String deleteStudent(@PathParam("id") int id) {
+        studentDB.remove(id);
+        return "Student removed.";
+    }
+}
