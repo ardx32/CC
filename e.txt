@@ -1,0 +1,257 @@
+Phase 1: Client Environment Setup and WSDL BindingBefore writing the client code, you must link the console application to your running ASMX service.Ensure the Service is Running: Start the ASMX web service project created previously (press F5 in that Visual Studio instance). 
+Copy the URL from the browser (e.g., https://localhost:44300/ComputationService.asmx).
+Create the Console Client: Open a new instance of Visual Studio $\rightarrow$ Create a new project $\rightarrow$ Select Console App (.NET Framework) $\rightarrow$ Name it SoapClientApp.
+Generate the Proxy (Service Reference):In the Solution Explorer, right-click on References and select Add Service Reference.
+Paste your running ASMX URL into the Address bar and click Go.
+Visual Studio will discover the ComputationService.
+Change the Namespace at the bottom to CloudServiceRef and click OK.
+Visual Studio has now automatically generated the network transport and XML parsing logic. 
+You simply instantiate the client object and call the methods as if they were local.
+Phase 2: Client Executables (Practicals 1–9)Below are the distinct implementations for each practical. 
+To run a specific practical, place its code block inside the static void Main(string[] args) method of your Program.cs file.
+
+1. Currency Conversion ClientC#
+
+using System;
+namespace SoapClientApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Distributed Currency Conversion ---");
+            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
+            
+            Console.Write("Enter amount in INR: ");
+            double inr = Convert.ToDouble(Console.ReadLine());
+            
+            double usd = client.ConvertRupeesToDollar(inr);
+            Console.WriteLine($"Result: {inr} INR is equivalent to {usd:F2} USD");
+            
+            Console.ReadLine();
+        }
+    }
+}
+
+2. Factorial ClientC#
+
+using System;
+namespace SoapClientApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Distributed Factorial Computation ---");
+            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
+            
+            Console.Write("Enter an integer: ");
+            int n = Convert.ToInt32(Console.ReadLine());
+            
+            try 
+            {
+                long result = client.CalculateFactorial(n);
+                Console.WriteLine($"The factorial of {n} is {result}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Computation Error: {ex.Message}");
+            }
+            
+            Console.ReadLine();
+        }
+    }
+}
+
+3. Prime Number ClientC#
+
+using System;
+namespace SoapClientApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Distributed Prime Validation ---");
+            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
+            
+            Console.Write("Enter a number to check: ");
+            int n = Convert.ToInt32(Console.ReadLine());
+            
+            string result = client.IsPrime(n);
+            Console.WriteLine($"System Analysis: The number {n} is {result}");
+            
+            Console.ReadLine();
+        }
+    }
+}
+
+4. Multiplication of 2 Numbers ClientC#
+
+using System;
+namespace SoapClientApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Distributed Multiplication ---");
+            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
+            
+            Console.Write("Enter first number: ");
+            double a = Convert.ToDouble(Console.ReadLine());
+            Console.Write("Enter second number: ");
+            double b = Convert.ToDouble(Console.ReadLine());
+            
+            double result = client.MultiplyTwo(a, b);
+            Console.WriteLine($"Product: {result}");
+            
+            Console.ReadLine();
+        }
+    }
+}
+
+5. Addition of 3 Numbers ClientC#
+
+using System;
+namespace SoapClientApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Distributed Triple Addition ---");
+            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
+            
+            Console.Write("Enter first number: ");
+            double a = Convert.ToDouble(Console.ReadLine());
+            Console.Write("Enter second number: ");
+            double b = Convert.ToDouble(Console.ReadLine());
+            Console.Write("Enter third number: ");
+            double c = Convert.ToDouble(Console.ReadLine());
+            
+            double result = client.AddThree(a, b, c);
+            Console.WriteLine($"Total Sum: {result}");
+            
+            Console.ReadLine();
+        }
+    }
+}
+
+6. Square of a Number ClientC#
+
+using System;
+namespace SoapClientApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Distributed Square Computation ---");
+            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
+            
+            Console.Write("Enter a number: ");
+            double n = Convert.ToDouble(Console.ReadLine());
+            
+            double result = client.Square(n);
+            Console.WriteLine($"Square of {n} is {result}");
+            
+            Console.ReadLine();
+        }
+    }
+}
+
+7. Largest Among 2 Numbers ClientC#
+
+using System;
+namespace SoapClientApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Distributed Maximum Value Analysis ---");
+            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
+            
+            Console.Write("Enter value A: ");
+            double a = Convert.ToDouble(Console.ReadLine());
+            Console.Write("Enter value B: ");
+            double b = Convert.ToDouble(Console.ReadLine());
+            
+            double result = client.FindLargest(a, b);
+            Console.WriteLine($"The largest value is {result}");
+            
+            Console.ReadLine();
+        }
+    }
+}
+
+8. Cube of a Number ClientC#
+
+using System;
+namespace SoapClientApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Distributed Cube Computation ---");
+            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
+            
+            Console.Write("Enter a number: ");
+            double n = Convert.ToDouble(Console.ReadLine());
+            
+            double result = client.Cube(n);
+            Console.WriteLine($"Cube of {n} is {result}");
+            
+            Console.ReadLine();
+        }
+    }
+}
+9. Calculator Suite ClientFor a comprehensive system test, this implementation uses a switch construct to route the user's intent to the correct remote service method.C#
+
+using System;
+namespace SoapClientApp
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Distributed Arithmetic Suite ---");
+            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
+            
+            Console.Write("Enter first operand: ");
+            double a = Convert.ToDouble(Console.ReadLine());
+            
+            Console.Write("Enter operator (+, -, *, /): ");
+            string op = Console.ReadLine();
+            
+            Console.Write("Enter second operand: ");
+            double b = Convert.ToDouble(Console.ReadLine());
+
+            try
+            {
+                double result = 0;
+                switch (op)
+                {
+                    case "+": result = client.CalcAdd(a, b); break;
+                    case "-": result = client.CalcSubtract(a, b); break;
+                    case "*": result = client.CalcMultiply(a, b); break;
+                    case "/": result = client.CalcDivide(a, b); break;
+                    default: 
+                        Console.WriteLine("Invalid operator selected.");
+                        return;
+                }
+                Console.WriteLine($"Result from Remote Server: {result}");
+            }
+            catch (Exception ex)
+            {
+                // Captures SOAP Faults (like division by zero exceptions passed from the server)
+                Console.WriteLine($"Service Exception: {ex.Message}");
+            }
+            
+            Console.ReadLine();
+        }
+    }
+}
+Phase 3: Execution and VerificationTo test any of the above modules:Ensure your ASMX Server project is currently running (IIS Express).Run your Console Application.The console will halt at Console.ReadLine(), assemble your inputs into an XML envelope, transmit them over HTTP, wait for the server's XML response, deserialize it into native C# data types, and display the resulting data on your terminal.
