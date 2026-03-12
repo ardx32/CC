@@ -1,0 +1,132 @@
+Initialize the Environment: * Open Visual Studio.
+Select Create a new project.Search for and select ASP.NET Web Application (.NET Framework) using C#. 
+Click Next.Name your project (e.g., CloudPracticalsSOAP) and click Create.
+Select the Empty template and click Create.
+Provision the Service Endpoint:In the Solution Explorer (right panel), right-click your project node.
+Navigate to Add $\rightarrow$ New Item.Search for Web Service (ASMX). Name the file ComputationService.asmx and click Add.Architecture of the .asmx.cs File:Visual Studio generates a code-behind file (ComputationService.asmx.cs). This is where the core logic resides.Every method exposed to the web must be explicitly decorated with the [WebMethod] attribute.Phase 2: Core Computational Logic (C# Implementation)You can consolidate all nine practical requirements into a single, robust web service class. Replace the default code in your ComputationService.asmx.cs file with the following analytical implementation:C#
+
+using System;
+using System.Web.Services;
+
+namespace CloudPracticalsSOAP
+{
+    [WebService(Namespace = "http://academic-research.org/")]
+    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
+    [System.ComponentModel.ToolboxItem(false)]
+    public class ComputationService : System.Web.Services.WebService
+    {
+        // ==========================================
+        // Practical 1: Currency Conversion
+        // ==========================================
+        [WebMethod(Description = "Converts INR to USD using a defined exchange rate.")]
+        public double ConvertRupeesToDollar(double rupees)
+        {
+            double conversionRate = 83.0; // In a production system, this would query a dynamic financial API
+            return rupees / conversionRate;
+        }
+
+        // ==========================================
+        // Practical 2: Factorial Calculation
+        // ==========================================
+        [WebMethod(Description = "Calculates the factorial of an integer n using an iterative approach.")]
+        public long CalculateFactorial(int n)
+        {
+            if (n < 0) throw new ArgumentException("Factorial is undefined for negative numbers.");
+            long factorial = 1;
+            for (int i = 1; i <= n; i++)
+            {
+                factorial *= i;
+            }
+            return factorial;
+        }
+
+        // ==========================================
+        // Practical 3: Prime Number Validation
+        // ==========================================
+        [WebMethod(Description = "Evaluates whether a given integer is a prime number.")]
+        public string IsPrime(int n)
+        {
+            if (n <= 1) return "Not Prime";
+            if (n == 2) return "Prime";
+            if (n % 2 == 0) return "Not Prime";
+
+            // Optimize by checking only up to the square root
+            int boundary = (int)Math.Floor(Math.Sqrt(n));
+            for (int i = 3; i <= boundary; i += 2)
+            {
+                if (n % i == 0) return "Not Prime";
+            }
+            return "Prime";
+        }
+
+        // ==========================================
+        // Practical 4: Multiplication of 2 Numbers
+        // ==========================================
+        [WebMethod(Description = "Computes the product of two floating-point numbers.")]
+        public double MultiplyTwo(double a, double b)
+        {
+            return a * b;
+        }
+
+        // ==========================================
+        // Practical 5: Addition of 3 Numbers
+        // ==========================================
+        [WebMethod(Description = "Computes the sum of three floating-point numbers.")]
+        public double AddThree(double a, double b, double c)
+        {
+            return a + b + c;
+        }
+
+        // ==========================================
+        // Practical 6: Square of a Number
+        // ==========================================
+        [WebMethod(Description = "Computes the square of a given number.")]
+        public double Square(double n)
+        {
+            return n * n;
+        }
+
+        // ==========================================
+        // Practical 7: Largest Among 2 Numbers
+        // ==========================================
+        [WebMethod(Description = "Determines the maximum value between two inputs.")]
+        public double FindLargest(double a, double b)
+        {
+            return Math.Max(a, b);
+        }
+
+        // ==========================================
+        // Practical 8: Cube of a Number
+        // ==========================================
+        [WebMethod(Description = "Computes the cube of a given number.")]
+        public double Cube(double n)
+        {
+            return Math.Pow(n, 3);
+        }
+
+        // ==========================================
+        // Practical 9: Calculator Suite
+        // ==========================================
+        [WebMethod(Description = "Calculator App: Addition")]
+        public double CalcAdd(double a, double b) { return a + b; }
+
+        [WebMethod(Description = "Calculator App: Subtraction")]
+        public double CalcSubtract(double a, double b) { return a - b; }
+
+        [WebMethod(Description = "Calculator App: Multiplication")]
+        public double CalcMultiply(double a, double b) { return a * b; }
+
+        [WebMethod(Description = "Calculator App: Division")]
+        public double CalcDivide(double a, double b)
+        {
+            if (b == 0)
+            {
+                throw new DivideByZeroException("Mathematical constraint: Division by zero is undefined.");
+            }
+            return a / b;
+        }
+    }
+}
+Phase 3: System Testing & ValidationVisual Studio includes IIS Express (Internet Information Services), providing an isolated testing environment that automatically generates a web-based testing interface for .asmx files.
+Launch the Service: Press F5 or click the Run button (usually indicating "IIS Express" or your browser name) in the top toolbar.
+Explore the WSDL Interface: Your default web browser will open, displaying a list of all operations you annotated with [WebMethod]. This interface reads the underlying WSDL (Web Services Description Language) XML document to render this UI.Execute Logic: * Click on any operation (e.g., CalculateFactorial).Enter test parameters in the provided input fields.Click the Invoke button.A new tab will open displaying the raw XML envelope returned by the server containing your computed result.
