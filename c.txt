@@ -1,0 +1,102 @@
+Google Maps utilizing REST API
+Integrating external APIs demonstrates composite system development.
+
+Implementation (HTML/JS):
+
+Procure an API Key from the Google Cloud Console (Maps JavaScript API).
+
+Create an index.html file with the following script layer.
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Map Implementation</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <script>
+      function initMap() {
+        // System coordinates centering
+        var location = {lat: 19.0330, lng: 73.0297}; 
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+          center: location
+        });
+        var marker = new google.maps.Marker({
+          position: location,
+          map: map
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <h2>REST API Integrated Map</h2>
+    <div id="map" style="height: 500px; width: 100%;"></div>
+  </body>
+</html>
+
+API --> AIzaSyAJRyEzfoaF4qv23-Qe6wi5K4MnF6Q6d1E
+
+MTOM (Message Transmission Optimization Mechanism)
+MTOM optimizes SOAP messages containing large binary data (like images or PDFs) by transmitting the binary payload outside the XML envelope, drastically reducing bandwidth overhead.
+
+Implementation (Java EE):
+
+Create a Web Service and apply the @MTOM annotation.
+
+Java
+import javax.jws.WebService;
+import javax.jws.WebMethod;
+import javax.xml.ws.soap.MTOM;
+import java.awt.Image;
+
+@MTOM
+@WebService(serviceName = "FileTransferService")
+public class FileTransferService {
+
+    @WebMethod
+    public Image downloadImage(String name) {
+        // Implementation fetches binary data (e.g., File I/O stream)
+        // MTOM automatically encodes this as a binary MIME attachment
+        return null; // Replace with actual Image object retrieval
+    }
+}
+
+
+AWS Simple Workflow Framework (SWF) - Hello World
+AWS SWF orchestrates complex, distributed workloads. 
+It splits logic into Activities (the tasks) and Workflows (the coordination).
+
+Conceptual Code Structure (Requires AWS Java SDK):
+Note: This utilizes the Flow Framework paradigm.
+
+Activity Interface & Implementation:
+
+Java
+@Activities(version = "1.0")
+@ActivityRegistrationOptions(defaultTaskScheduleToStartTimeoutSeconds = 300)
+public interface GreeterActivities {
+    void printHello(String name);
+}
+
+public class GreeterActivitiesImpl implements GreeterActivities {
+    @Override
+    public void printHello(String name) {
+        System.out.println("Hello, " + name + "!");
+    }
+}
+Workflow Interface & Implementation:
+
+Java
+@Workflow
+@WorkflowRegistrationOptions(defaultExecutionStartToCloseTimeoutSeconds = 300)
+public interface GreeterWorkflow {
+    @Execute(version = "1.0")
+    void greet(String name);
+}
+
+public class GreeterWorkflowImpl implements GreeterWorkflow {
+    private final GreeterActivitiesClient client = new GreeterActivitiesClientImpl();
+
+    @Override
+    public void greet(String name) {
+        client.printHello(name); // Workflow coordinates the execution of the Activity
+    }
+}
