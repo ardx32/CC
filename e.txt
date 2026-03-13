@@ -1,257 +1,158 @@
-Phase 1: Client Environment Setup and WSDL BindingBefore writing the client code, you must link the console application to your running ASMX service.Ensure the Service is Running: Start the ASMX web service project created previously (press F5 in that Visual Studio instance). 
-Copy the URL from the browser (e.g., https://localhost:44300/ComputationService.asmx).
-Create the Console Client: Open a new instance of Visual Studio $\rightarrow$ Create a new project $\rightarrow$ Select Console App (.NET Framework) $\rightarrow$ Name it SoapClientApp.
-Generate the Proxy (Service Reference):In the Solution Explorer, right-click on References and select Add Service Reference.
-Paste your running ASMX URL into the Address bar and click Go.
-Visual Studio will discover the ComputationService.
-Change the Namespace at the bottom to CloudServiceRef and click OK.
-Visual Studio has now automatically generated the network transport and XML parsing logic. 
-You simply instantiate the client object and call the methods as if they were local.
-Phase 2: Client Executables (Practicals 1–9)Below are the distinct implementations for each practical. 
-To run a specific practical, place its code block inside the static void Main(string[] args) method of your Program.cs file.
+Students Database (CRUD)This service manages Student data (Name, Age, Phone, Subject) using HTTP verbs to dictate the operation. Open StudentResource.java and replace its contents with the following logic:Javapackage com.api;
 
-1. Currency Conversion ClientC#
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.Map;
 
-using System;
-namespace SoapClientApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("--- Distributed Currency Conversion ---");
-            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
-            
-            Console.Write("Enter amount in INR: ");
-            double inr = Convert.ToDouble(Console.ReadLine());
-            
-            double usd = client.ConvertRupeesToDollar(inr);
-            Console.WriteLine($"Result: {inr} INR is equivalent to {usd:F2} USD");
-            
-            Console.ReadLine();
+@Path("student")
+public class StudentResource {
+
+    // Simulating a database using RAM (Static memory)
+    private static Map<Integer, String> studentDB = new HashMap<>();
+    private static int idCounter = 1;
+
+    // CREATE (POST)
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    public String addStudent(@FormParam("name") String name, 
+                             @FormParam("age") String age, 
+                             @FormParam("phone") String phone, 
+                             @FormParam("subject") String subject) {
+        String record = "Name: " + name + ", Age: " + age + ", Phone: " + phone + ", Subject: " + subject;
+        studentDB.put(idCounter, record);
+        return "Student inserted successfully with ID: " + (idCounter++);
+    }
+
+    // READ (GET)
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getAllStudents() {
+        if (studentDB.isEmpty()) return "Database is empty.";
+        StringBuilder allRecords = new StringBuilder("--- Student Database ---\n");
+        for (Map.Entry<Integer, String> entry : studentDB.entrySet()) {
+            allRecords.append("ID: ").append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
         }
+        return allRecords.toString();
+    }
+
+    // UPDATE (PUT)
+    @PUT
+    @Path("{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String updateStudent(@PathParam("id") int id, 
+                                @FormParam("subject") String newSubject) {
+        if (studentDB.containsKey(id)) {
+            String oldRecord = studentDB.get(id);
+            String newRecord = oldRecord + " [Updated Subject: " + newSubject + "]";
+            studentDB.put(id, newRecord);
+            return "Student ID " + id + " updated.";
+        }
+        return "Student ID not found.";
+    }
+
+    // DELETE (DELETE)
+    @DELETE
+    @Path("{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String deleteStudent(@PathParam("id") int id) {
+        if (studentDB.remove(id) != null) {
+            return "Student ID " + id + " deleted from database.";
+        }
+        return "Student ID not found.";
+    }
+}
+Phase 3: Practical 2 - Employee Database (CRUD)To add the Employee service to the same project:Right-click the com.api package $\rightarrow$ New $\rightarrow$ Java Class.Name it EmployeeResource and implement the following logic. This tracks Name, Department, Designation, and Salary.Javapackage com.api;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.Map;
+
+@Path("employee")
+public class EmployeeResource {
+
+    private static Map<Integer, String> employeeDB = new HashMap<>();
+    private static int empIdCounter = 101; // Starting ID at 101 for distinction
+
+    // CREATE (POST)
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    public String addEmployee(@FormParam("name") String name, 
+                              @FormParam("dept") String dept, 
+                              @FormParam("designation") String designation, 
+                              @FormParam("salary") String salary) {
+        String record = "Name: " + name + ", Dept: " + dept + ", Role: " + designation + ", Salary: $" + salary;
+        employeeDB.put(empIdCounter, record);
+        return "Employee hired with ID: " + (empIdCounter++);
+    }
+
+    // READ (GET)
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getAllEmployees() {
+        if (employeeDB.isEmpty()) return "Employee database is empty.";
+        StringBuilder allRecords = new StringBuilder("--- Employee Database ---\n");
+        for (Map.Entry<Integer, String> entry : employeeDB.entrySet()) {
+            allRecords.append("EMP-ID: ").append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
+        }
+        return allRecords.toString();
+    }
+
+    // UPDATE (PUT)
+    @PUT
+    @Path("{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String updateSalary(@PathParam("id") int id, 
+                               @FormParam("salary") String newSalary) {
+        if (employeeDB.containsKey(id)) {
+            String oldRecord = employeeDB.get(id);
+            employeeDB.put(id, oldRecord + " [Updated Salary: $" + newSalary + "]");
+            return "Employee ID " + id + " salary updated.";
+        }
+        return "Employee ID not found.";
+    }
+
+    // DELETE (DELETE)
+    @DELETE
+    @Path("{id}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String deleteEmployee(@PathParam("id") int id) {
+        if (employeeDB.remove(id) != null) {
+            return "Employee ID " + id + " removed from system.";
+        }
+        return "Employee ID not found.";
+    }
+}
+Phase 4: System Deployment and TestingNetBeans features a built-in testing interface for REST APIs, eliminating the need to write client-side HTML forms or download external tools like Postman.Deploy the Architecture: Right-click the RestfulPracticals project node and select Deploy. Wait for the GlassFish server to start and confirm deployment in the output window.Access the Testing Sandbox: * Expand the RESTful Web Services folder in your project tree.You will see student and employee.Right-click either of them and select Test RESTful Web Services.Execute Operations:A browser tab will open displaying a graphical interface.On the left panel, click on student (or employee).Select the POST method. Fill out the parameters (name, age, etc.) and click Test. Check the "Response" window at the bottom to see your success message.Select the GET method and click Test to view the newly added record in the simulated database.To test PUT or DELETE, expand the student node on the left, click on {id}, enter the ID number generated by your POST request, and execute the test.
+
+
+
+ApplicationConfig
+
+package com.api;
+
+import java.util.Set;
+import javax.ws.rs.core.Application;
+
+// This annotation tells the server that all REST APIs start with /webresources
+@javax.ws.rs.ApplicationPath("webresources")
+public class ApplicationConfig extends Application {
+
+    @Override
+    public Set<Class<?>> getClasses() {
+        Set<Class<?>> resources = new java.util.HashSet<>();
+        addRestResourceClasses(resources);
+        return resources;
+    }
+
+    // Register your API classes here so the server knows they exist
+    private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(com.api.StudentResource.class);
+        
+        // Uncomment the line below if you also created the Employee Practical
+        // resources.add(com.api.EmployeeResource.class); 
     }
 }
 
-2. Factorial ClientC#
-
-using System;
-namespace SoapClientApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("--- Distributed Factorial Computation ---");
-            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
-            
-            Console.Write("Enter an integer: ");
-            int n = Convert.ToInt32(Console.ReadLine());
-            
-            try 
-            {
-                long result = client.CalculateFactorial(n);
-                Console.WriteLine($"The factorial of {n} is {result}");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Computation Error: {ex.Message}");
-            }
-            
-            Console.ReadLine();
-        }
-    }
-}
-
-3. Prime Number ClientC#
-
-using System;
-namespace SoapClientApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("--- Distributed Prime Validation ---");
-            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
-            
-            Console.Write("Enter a number to check: ");
-            int n = Convert.ToInt32(Console.ReadLine());
-            
-            string result = client.IsPrime(n);
-            Console.WriteLine($"System Analysis: The number {n} is {result}");
-            
-            Console.ReadLine();
-        }
-    }
-}
-
-4. Multiplication of 2 Numbers ClientC#
-
-using System;
-namespace SoapClientApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("--- Distributed Multiplication ---");
-            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
-            
-            Console.Write("Enter first number: ");
-            double a = Convert.ToDouble(Console.ReadLine());
-            Console.Write("Enter second number: ");
-            double b = Convert.ToDouble(Console.ReadLine());
-            
-            double result = client.MultiplyTwo(a, b);
-            Console.WriteLine($"Product: {result}");
-            
-            Console.ReadLine();
-        }
-    }
-}
-
-5. Addition of 3 Numbers ClientC#
-
-using System;
-namespace SoapClientApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("--- Distributed Triple Addition ---");
-            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
-            
-            Console.Write("Enter first number: ");
-            double a = Convert.ToDouble(Console.ReadLine());
-            Console.Write("Enter second number: ");
-            double b = Convert.ToDouble(Console.ReadLine());
-            Console.Write("Enter third number: ");
-            double c = Convert.ToDouble(Console.ReadLine());
-            
-            double result = client.AddThree(a, b, c);
-            Console.WriteLine($"Total Sum: {result}");
-            
-            Console.ReadLine();
-        }
-    }
-}
-
-6. Square of a Number ClientC#
-
-using System;
-namespace SoapClientApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("--- Distributed Square Computation ---");
-            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
-            
-            Console.Write("Enter a number: ");
-            double n = Convert.ToDouble(Console.ReadLine());
-            
-            double result = client.Square(n);
-            Console.WriteLine($"Square of {n} is {result}");
-            
-            Console.ReadLine();
-        }
-    }
-}
-
-7. Largest Among 2 Numbers ClientC#
-
-using System;
-namespace SoapClientApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("--- Distributed Maximum Value Analysis ---");
-            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
-            
-            Console.Write("Enter value A: ");
-            double a = Convert.ToDouble(Console.ReadLine());
-            Console.Write("Enter value B: ");
-            double b = Convert.ToDouble(Console.ReadLine());
-            
-            double result = client.FindLargest(a, b);
-            Console.WriteLine($"The largest value is {result}");
-            
-            Console.ReadLine();
-        }
-    }
-}
-
-8. Cube of a Number ClientC#
-
-using System;
-namespace SoapClientApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("--- Distributed Cube Computation ---");
-            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
-            
-            Console.Write("Enter a number: ");
-            double n = Convert.ToDouble(Console.ReadLine());
-            
-            double result = client.Cube(n);
-            Console.WriteLine($"Cube of {n} is {result}");
-            
-            Console.ReadLine();
-        }
-    }
-}
-9. Calculator Suite ClientFor a comprehensive system test, this implementation uses a switch construct to route the user's intent to the correct remote service method.C#
-
-using System;
-namespace SoapClientApp
-{
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("--- Distributed Arithmetic Suite ---");
-            CloudServiceRef.ComputationServiceSoapClient client = new CloudServiceRef.ComputationServiceSoapClient();
-            
-            Console.Write("Enter first operand: ");
-            double a = Convert.ToDouble(Console.ReadLine());
-            
-            Console.Write("Enter operator (+, -, *, /): ");
-            string op = Console.ReadLine();
-            
-            Console.Write("Enter second operand: ");
-            double b = Convert.ToDouble(Console.ReadLine());
-
-            try
-            {
-                double result = 0;
-                switch (op)
-                {
-                    case "+": result = client.CalcAdd(a, b); break;
-                    case "-": result = client.CalcSubtract(a, b); break;
-                    case "*": result = client.CalcMultiply(a, b); break;
-                    case "/": result = client.CalcDivide(a, b); break;
-                    default: 
-                        Console.WriteLine("Invalid operator selected.");
-                        return;
-                }
-                Console.WriteLine($"Result from Remote Server: {result}");
-            }
-            catch (Exception ex)
-            {
-                // Captures SOAP Faults (like division by zero exceptions passed from the server)
-                Console.WriteLine($"Service Exception: {ex.Message}");
-            }
-            
-            Console.ReadLine();
-        }
-    }
-}
-Phase 3: Execution and VerificationTo test any of the above modules:Ensure your ASMX Server project is currently running (IIS Express).Run your Console Application.The console will halt at Console.ReadLine(), assemble your inputs into an XML envelope, transmit them over HTTP, wait for the server's XML response, deserialize it into native C# data types, and display the resulting data on your terminal.
+ID: 1 -> Name: [Your Input], Age: [Your Input], Phone: [Your Input], Subject: [Your Input]
