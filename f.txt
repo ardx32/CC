@@ -1,0 +1,58 @@
+HelloActivity.class
+
+// Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
+public interface HelloActivity {
+   void printHello();
+}
+
+HelloActivityImpl.class
+
+// Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
+public class HelloActivityImpl implements HelloActivity {
+   public HelloActivityImpl() {
+   }
+
+   public void printHello() {
+      System.out.println("Hello World from AWS Flow Activity");
+   }
+}
+
+// Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
+public interface HelloWorkflow {
+   void start();
+}
+
+HelloWorkflow.class
+
+// Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
+public interface HelloWorkflow {
+   void start();
+}
+
+HelloWorkflowImpl.class
+
+// Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
+public class HelloWorkflowImpl implements HelloWorkflow {
+   HelloActivity activity = new HelloActivityImpl();
+
+   public HelloWorkflowImpl() {
+   }
+
+   public void start() {
+      this.activity.printHello();
+   }
+}
+
+Worker.class
+
+// Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
+public class Worker {
+   public Worker() {
+   }
+
+   public static void main(String[] var0) {
+      HelloWorkflowImpl var1 = new HelloWorkflowImpl();
+      var1.start();
+   }
+}
+
