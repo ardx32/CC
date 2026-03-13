@@ -1,132 +1,292 @@
-Initialize the Environment: * Open Visual Studio.
-Select Create a new project.Search for and select ASP.NET Web Application (.NET Framework) using C#. 
-Click Next.Name your project (e.g., CloudPracticalsSOAP) and click Create.
-Select the Empty template and click Create.
-Provision the Service Endpoint:In the Solution Explorer (right panel), right-click your project node.
-Navigate to Add $\rightarrow$ New Item.Search for Web Service (ASMX). Name the file ComputationService.asmx and click Add.Architecture of the .asmx.cs File:Visual Studio generates a code-behind file (ComputationService.asmx.cs). This is where the core logic resides.Every method exposed to the web must be explicitly decorated with the [WebMethod] attribute.Phase 2: Core Computational Logic (C# Implementation)You can consolidate all nine practical requirements into a single, robust web service class. Replace the default code in your ComputationService.asmx.cs file with the following analytical implementation:C#
+1. Currency Conversion (INR to USD)This module applies a direct scalar transformation to convert the numerical input based on a static exchange rate.C#
 
 using System;
-using System.Web.Services;
-
-namespace CloudPracticalsSOAP
+namespace Currency
 {
-    [WebService(Namespace = "http://academic-research.org/")]
-    [WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
-    [System.ComponentModel.ToolboxItem(false)]
-    public class ComputationService : System.Web.Services.WebService
+    class Program
     {
-        // ==========================================
-        // Practical 1: Currency Conversion
-        // ==========================================
-        [WebMethod(Description = "Converts INR to USD using a defined exchange rate.")]
-        public double ConvertRupeesToDollar(double rupees)
+        static void Main(string[] args)
         {
-            double conversionRate = 83.0; // In a production system, this would query a dynamic financial API
-            return rupees / conversionRate;
-        }
-
-        // ==========================================
-        // Practical 2: Factorial Calculation
-        // ==========================================
-        [WebMethod(Description = "Calculates the factorial of an integer n using an iterative approach.")]
-        public long CalculateFactorial(int n)
-        {
-            if (n < 0) throw new ArgumentException("Factorial is undefined for negative numbers.");
-            long factorial = 1;
-            for (int i = 1; i <= n; i++)
+            Console.WriteLine("--- Currency Conversion Engine ---");
+            try
             {
-                factorial *= i;
+                Console.Write("Enter amount in INR: ");
+                double inr = Convert.ToDouble(Console.ReadLine());
+                
+                double conversionRate = 83.0; // Static oracle value
+                double usd = inr / conversionRate;
+                
+                Console.WriteLine($"Result: {inr} INR = {usd:F2} USD");
             }
-            return factorial;
-        }
-
-        // ==========================================
-        // Practical 3: Prime Number Validation
-        // ==========================================
-        [WebMethod(Description = "Evaluates whether a given integer is a prime number.")]
-        public string IsPrime(int n)
-        {
-            if (n <= 1) return "Not Prime";
-            if (n == 2) return "Prime";
-            if (n % 2 == 0) return "Not Prime";
-
-            // Optimize by checking only up to the square root
-            int boundary = (int)Math.Floor(Math.Sqrt(n));
-            for (int i = 3; i <= boundary; i += 2)
+            catch (FormatException)
             {
-                if (n % i == 0) return "Not Prime";
+                Console.WriteLine("[Error]: Invalid numerical format.");
             }
-            return "Prime";
-        }
-
-        // ==========================================
-        // Practical 4: Multiplication of 2 Numbers
-        // ==========================================
-        [WebMethod(Description = "Computes the product of two floating-point numbers.")]
-        public double MultiplyTwo(double a, double b)
-        {
-            return a * b;
-        }
-
-        // ==========================================
-        // Practical 5: Addition of 3 Numbers
-        // ==========================================
-        [WebMethod(Description = "Computes the sum of three floating-point numbers.")]
-        public double AddThree(double a, double b, double c)
-        {
-            return a + b + c;
-        }
-
-        // ==========================================
-        // Practical 6: Square of a Number
-        // ==========================================
-        [WebMethod(Description = "Computes the square of a given number.")]
-        public double Square(double n)
-        {
-            return n * n;
-        }
-
-        // ==========================================
-        // Practical 7: Largest Among 2 Numbers
-        // ==========================================
-        [WebMethod(Description = "Determines the maximum value between two inputs.")]
-        public double FindLargest(double a, double b)
-        {
-            return Math.Max(a, b);
-        }
-
-        // ==========================================
-        // Practical 8: Cube of a Number
-        // ==========================================
-        [WebMethod(Description = "Computes the cube of a given number.")]
-        public double Cube(double n)
-        {
-            return Math.Pow(n, 3);
-        }
-
-        // ==========================================
-        // Practical 9: Calculator Suite
-        // ==========================================
-        [WebMethod(Description = "Calculator App: Addition")]
-        public double CalcAdd(double a, double b) { return a + b; }
-
-        [WebMethod(Description = "Calculator App: Subtraction")]
-        public double CalcSubtract(double a, double b) { return a - b; }
-
-        [WebMethod(Description = "Calculator App: Multiplication")]
-        public double CalcMultiply(double a, double b) { return a * b; }
-
-        [WebMethod(Description = "Calculator App: Division")]
-        public double CalcDivide(double a, double b)
-        {
-            if (b == 0)
-            {
-                throw new DivideByZeroException("Mathematical constraint: Division by zero is undefined.");
-            }
-            return a / b;
+            Console.ReadLine();
         }
     }
 }
-Phase 3: System Testing & ValidationVisual Studio includes IIS Express (Internet Information Services), providing an isolated testing environment that automatically generates a web-based testing interface for .asmx files.
-Launch the Service: Press F5 or click the Run button (usually indicating "IIS Express" or your browser name) in the top toolbar.
-Explore the WSDL Interface: Your default web browser will open, displaying a list of all operations you annotated with [WebMethod]. This interface reads the underlying WSDL (Web Services Description Language) XML document to render this UI.Execute Logic: * Click on any operation (e.g., CalculateFactorial).Enter test parameters in the provided input fields.Click the Invoke button.A new tab will open displaying the raw XML envelope returned by the server containing your computed result.
+
+2. Factorial ComputationThis implementation utilizes an iterative algorithm, processing in $\mathcal{O}(n)$ time complexity, to calculate the product of all positive descending integers.C#
+
+using System;
+namespace Factorial
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Factorial Computation ---");
+            try
+            {
+                Console.Write("Enter a positive integer: ");
+                int n = Convert.ToInt32(Console.ReadLine());
+                
+                if (n < 0) 
+                {
+                    Console.WriteLine("[Error]: Factorial is strictly undefined for negative integers.");
+                    return;
+                }
+                
+                long fact = 1;
+                for (int i = 1; i <= n; i++) 
+                {
+                    fact *= i;
+                }
+                
+                Console.WriteLine($"Factorial of {n} is: {fact}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[System Error]: {ex.Message}");
+            }
+            Console.ReadLine();
+        }
+    }
+}
+
+3. Prime Number ValidationTo optimize the validation process, this algorithm restricts the loop boundary to the square root of $n$, reducing time complexity from $\mathcal{O}(n)$ to $\mathcal{O}(\sqrt{n})$.C#
+
+using System;
+namespace Prime
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Prime Validation Engine ---");
+            try
+            {
+                Console.Write("Enter an integer to evaluate: ");
+                int n = Convert.ToInt32(Console.ReadLine());
+                
+                bool isPrime = true;
+                if (n <= 1) isPrime = false;
+                else if (n > 2)
+                {
+                    if (n % 2 == 0) isPrime = false;
+                    else
+                    {
+                        int boundary = (int)Math.Floor(Math.Sqrt(n));
+                        for (int i = 3; i <= boundary; i += 2)
+                        {
+                            if (n % i == 0) { isPrime = false; break; }
+                        }
+                    }
+                }
+
+                Console.WriteLine($"Analysis: {n} is {(isPrime ? "a Prime" : "NOT a Prime")} number.");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("[Error]: Invalid numerical format.");
+            }
+            Console.ReadLine();
+        }
+    }
+}
+
+4. Multiplication of 2 NumbersC#
+
+using System;
+namespace Multiplication
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Multiplication Engine ---");
+            try
+            {
+                Console.Write("Enter first parameter: ");
+                double a = Convert.ToDouble(Console.ReadLine());
+                Console.Write("Enter second parameter: ");
+                double b = Convert.ToDouble(Console.ReadLine());
+                
+                Console.WriteLine($"Product: {a * b}");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("[Error]: Invalid numerical format.");
+            }
+            Console.ReadLine();
+        }
+    }
+}
+
+5. Addition of 3 NumbersC#
+
+using System;
+namespace Addition
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Triple Addition Engine ---");
+            try
+            {
+                Console.Write("Enter parameter 1: ");
+                double a = Convert.ToDouble(Console.ReadLine());
+                Console.Write("Enter parameter 2: ");
+                double b = Convert.ToDouble(Console.ReadLine());
+                Console.Write("Enter parameter 3: ");
+                double c = Convert.ToDouble(Console.ReadLine());
+                
+                Console.WriteLine($"Total Sum: {a + b + c}");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("[Error]: Invalid numerical format.");
+            }
+            Console.ReadLine();
+        }
+    }
+}
+
+6. Square of a NumberC#
+
+using System;
+namespace Square
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Square Computation ---");
+            try
+            {
+                Console.Write("Enter numerical base: ");
+                double n = Convert.ToDouble(Console.ReadLine());
+                
+                Console.WriteLine($"Square of {n} is: {n * n}");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("[Error]: Invalid numerical format.");
+            }
+            Console.ReadLine();
+        }
+    }
+}
+
+7. Largest Among 2 NumbersUtilizing Math.Max, this directly compares memory values at the CPU level for optimal execution speed.C#
+
+using System;
+namespace Largest
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Maximum Value Analysis ---");
+            try
+            {
+                Console.Write("Enter Value A: ");
+                double a = Convert.ToDouble(Console.ReadLine());
+                Console.Write("Enter Value B: ");
+                double b = Convert.ToDouble(Console.ReadLine());
+                
+                Console.WriteLine($"The maximum value is: {Math.Max(a, b)}");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("[Error]: Invalid numerical format.");
+            }
+            Console.ReadLine();
+        }
+    }
+}
+
+8. Cube of a NumberC#
+
+using System;
+namespace Cube
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Cube Computation ---");
+            try
+            {
+                Console.Write("Enter numerical base: ");
+                double n = Convert.ToDouble(Console.ReadLine());
+                
+                Console.WriteLine($"Cube of {n} is: {Math.Pow(n, 3)}");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("[Error]: Invalid numerical format.");
+            }
+            Console.ReadLine();
+        }
+    }
+}
+
+9. Arithmetic Calculator SuiteThis module integrates control-flow logic (switch) to act as an execution router, mapping the chosen operator string to the corresponding mathematical constraint.C#
+
+using System;
+namespace Calculator
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("--- Full Arithmetic Suite ---");
+            try
+            {
+                Console.Write("Enter first operand: ");
+                double a = Convert.ToDouble(Console.ReadLine());
+                
+                Console.Write("Enter operator (+, -, *, /): ");
+                string op = Console.ReadLine();
+                
+                Console.Write("Enter second operand: ");
+                double b = Convert.ToDouble(Console.ReadLine());
+
+                double result = 0;
+                switch (op)
+                {
+                    case "+": result = a + b; break;
+                    case "-": result = a - b; break;
+                    case "*": result = a * b; break;
+                    case "/":
+                        if (b == 0) throw new DivideByZeroException("Mathematical constraint violated: Division by zero.");
+                        result = a / b;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid operator identified. Use +, -, *, or /.");
+                        return;
+                }
+                Console.WriteLine($"Computed Result: {result}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[System Error]: {ex.Message}");
+            }
+            Console.ReadLine();
+        }
+    }
+}
+Execution WorkflowOpen Visual Studio.Select File $\rightarrow$ New $\rightarrow$ Project $\rightarrow$ Console App (.NET Framework).Paste the respective code into the Program.cs file.Press F5 to compile and run the individual algorithm in an isolated terminal instance.
